@@ -1,18 +1,16 @@
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+"use client";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { getStories } from "@/app/lib/api";
 
-type Props = {
-  children: React.ReactNode;
-};
+export default function HomePage() {
+  const [stories, setStories] = useState([]);
 
-export default function RootLayout({ children }: Props) {
-  return (
-    <html lang="en">
-      <body>
-        <Header />
-        {children}
-        <Footer />
-      </body>
-    </html>
-  );
+  useEffect(() => {
+    fetch("https://your-api.mockapi.io/stories")
+      .then(res => res.json())
+      .then(data => setStories(data));
+  }, []);
+
+  return <div>{/* render */}</div>;
 }
