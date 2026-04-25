@@ -40,16 +40,16 @@ export default function Header() {
 
       {/* MENU DESKTOP */}
       <nav className="hidden md:flex gap-6 text-black font-medium">
-        <Link href="/" className={activeClass("/")} transition-all duration-200>
+        <Link href="/" className={`${activeClass("/")} transition-all duration-200`}>
           Trang chủ
         </Link>
 
-        <Link href="/browse" className={activeClass("/browse")} transition-all duration-200>
+        <Link href="/browse" className={`${activeClass("/browse")} transition-all duration-200`}>
           Khám phá
         </Link>
 
         {user?.role === "user" && (
-          <Link href="/write" className={activeClass("/write")}>
+          <Link href="/write" className={`${activeClass("/write")} transition-all duration-200`}>
             Sáng tác
           </Link>
         )}
