@@ -1,0 +1,8 @@
+<img
+  src={item.cover}
+  alt={item.title}
+  onError={(e) => {
+    (e.target as HTMLImageElement).src = "/no-image.png";
+  }}
+  className="w-full h-full object-cover"
+/>

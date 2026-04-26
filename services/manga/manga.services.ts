@@ -2,6 +2,15 @@ import axios from "axios";
 
 const BASE_URL = "https://69cfd6b2a4647a9fc6760d2c.mockapi.io";
 
+const mangaService = {
+  getByType: async (type: "comic" | "text") => {
+    const url = type === "comic" ? "/manga" : "/novel";
+    const res = await axios.get(BASE_URL + url);
+    return res.data;
+  },
+};
+
+
 export type manga = {
     id: string;
     title: string;
@@ -33,6 +42,19 @@ export type UpdateMangaType = {
 };
 
 const storyService = {
+
+
+
+  getByType: async (type: "comic" | "text") => {
+    const url = type === "comic" ? "/manga" : "/novel";
+    const res = await axios.get(BASE_URL + url);
+    return res.data;
+  },
+
+
+
+
+
   // GET ALL
   setStories: async (): Promise<manga[]> => {
     const res = await axios.get(`${BASE_URL}/manga`);

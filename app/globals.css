@@ -42,3 +42,7 @@ body {
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
+
+.rank-1 { color: #f59e0b; font-weight: bold; } /* vàng */
+.rank-2 { color: #9ca3af; font-weight: bold; } /* bạc */
+.rank-3 { color: #d97706; font-weight: bold; } /* đồng */
