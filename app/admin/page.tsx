@@ -22,6 +22,7 @@ export default function AdminPage() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingStory, setEditingStory] = useState<manga | null>(null);
   const [form] = Form.useForm();
+  const [modalDefaultType, setModalDefaultType] = useState<'comic' | 'text'>('comic');
   const [systemConfig, setSystemConfig] = useState({
     banner: '',
     notification: '',
@@ -33,9 +34,9 @@ export default function AdminPage() {
     setSystemConfig({ ...systemConfig, [key]: value });
   };
 
-  const handleApprove = async (id: string, status: 'approved' | 'rejected') => {
+  const handleApprove = async (id: string, type: 'comic' | 'text', status: 'approved' | 'rejected') => {
     try {
-      await storyService.updateStory(id, { status });
+      await storyService.updateStory(id, { type, status });
       message.success(`Story ${status}`);
       loadStories();
     } catch (error: any) {
@@ -44,9 +45,9 @@ export default function AdminPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, type: 'comic' | 'text') => {
     try {
-      await storyService.deleteStory(id);
+      await storyService.deleteStory(id, type);
       message.success('Story deleted successfully');
       loadStories();
     } catch (error: any) {
@@ -67,7 +68,7 @@ export default function AdminPage() {
 
   const loadStories = async () => {
     try {
-      const data = await storyService.setStories();
+      const data = await storyService.getAllStories();
       setStories(data);
     } catch (error: any) {
       console.error('Failed to load stories:', error);
@@ -79,6 +80,7 @@ export default function AdminPage() {
     try {
       const submitData = {
         ...values,
+        type: values.type || editingStory?.type || modalDefaultType,
         view: editingStory?.view || 0,
         likes: editingStory?.likes || 0,
         createdAt: editingStory?.createdAt || new Date().toISOString(),
@@ -108,21 +110,25 @@ export default function AdminPage() {
     message.success('Comment deleted');
   };
 
-  const showModal = (story?: manga) => {
+  const showModal = (story?: manga, defaultType: 'comic' | 'text' = 'comic') => {
     setEditingStory(story || null);
+    setModalDefaultType(defaultType);
+    if (story) {
+      form.setFieldsValue({
+        title: story.title,
+        author: story.author,
+        type: story.type,
+        cover: story.cover,
+      });
+    } else {
+      form.setFieldsValue({
+        title: '',
+        author: '',
+        type: defaultType,
+        cover: '',
+      });
+    }
     setIsModalVisible(true);
-    setTimeout(() => {
-      if (story) {
-        form.setFieldsValue({
-          title: story.title,
-          author: story.author,
-          type: story.type,
-          cover: story.cover,
-        });
-      } else {
-        form.resetFields();
-      }
-    }, 100);
   };
 
   const storyColumns = [
@@ -139,13 +145,16 @@ export default function AdminPage() {
         <>
           <Button icon={<EyeOutlined />} onClick={() => showModal(record)} />
           <Button icon={<EditOutlined />} onClick={() => showModal(record)} />
-          <Button danger onClick={() => handleApprove(record.id, 'approved')}>Duyệt</Button>
-          <Button danger onClick={() => handleApprove(record.id, 'rejected')}>Từ chối</Button>
-          <Button icon={<DeleteOutlined />} danger onClick={() => handleDelete(record.id)} />
+          <Button danger onClick={() => handleApprove(record.id, record.type, 'approved')}>Duyệt</Button>
+          <Button danger onClick={() => handleApprove(record.id, record.type, 'rejected')}>Từ chối</Button>
+          <Button icon={<DeleteOutlined />} danger onClick={() => handleDelete(record.id, record.type)} />
         </>
       ),
     },
   ];
+
+  const comicStories = stories.filter((story) => story.type === 'comic');
+  const textStories = stories.filter((story) => story.type === 'text');
 
   const userColumns = [
     { title: 'Username', dataIndex: 'username', key: 'username' },
@@ -177,10 +186,14 @@ export default function AdminPage() {
       label: 'Quản lý Nội dung',
       children: (
         <>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => showModal()}>
-            Thêm Truyện Mới
-          </Button>
-          <Table dataSource={stories} columns={storyColumns} rowKey="id" />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+            <Card title="Giao diện Truyện Tranh" extra={<Button type="primary" icon={<PlusOutlined />} onClick={() => showModal(undefined, 'comic')}>Thêm Truyện Tranh</Button>}>
+              <Table dataSource={comicStories} columns={storyColumns} rowKey="id" pagination={{ pageSize: 5 }} />
+            </Card>
+            <Card title="Giao diện Truyện Chữ" extra={<Button type="default" icon={<PlusOutlined />} onClick={() => showModal(undefined, 'text')}>Thêm Truyện Chữ</Button>}>
+              <Table dataSource={textStories} columns={storyColumns} rowKey="id" pagination={{ pageSize: 5 }} />
+            </Card>
+          </div>
           <div style={{ marginTop: '20px' }}>
             <h3>Quản lý Danh mục</h3>
             <Select mode="tags" style={{ width: '100%' }} placeholder="Thêm thể loại mới" value={categories} onChange={setCategories} />

@@ -50,27 +50,35 @@ const storyService = {
     return res.data;
   },
 
-  // GET ALL
-  setStories: async (): Promise<manga[]> => {
-    const res = await axios.get(`${BASE_URL}/manga`);
-    return res.data;
+  getAllStories: async (): Promise<manga[]> => {
+    const [mangaList, novelList] = await Promise.all([
+      axios.get(`${BASE_URL}/manga`),
+      axios.get(`${BASE_URL}/novel`),
+    ]);
+    return [
+      ...mangaList.data.map((item: any) => ({ ...item, type: 'comic' as const })),
+      ...novelList.data.map((item: any) => ({ ...item, type: 'text' as const })),
+    ];
   },
 
   // CREATE
   createStory: async (data: CreateMangaType): Promise<manga> => {
-    const res = await axios.post(`${BASE_URL}/manga`, data);
+    const url = data.type === 'comic' ? '/manga' : '/novel';
+    const res = await axios.post(`${BASE_URL}${url}`, data);
     return res.data;
   },
 
   // UPDATE
   updateStory: async (id: string, data: UpdateMangaType): Promise<manga> => {
-    const res = await axios.put(`${BASE_URL}/manga/${id}`, data);
+    const url = data.type === 'comic' ? '/manga' : '/novel';
+    const res = await axios.put(`${BASE_URL}${url}/${id}`, data);
     return res.data;
   },
 
   // DELETE
-  deleteStory: async (id: string): Promise<void> => {
-    await axios.delete(`${BASE_URL}/manga/${id}`);
+  deleteStory: async (id: string, type: 'comic' | 'text') => {
+    const url = type === 'comic' ? '/manga' : '/novel';
+    await axios.delete(`${BASE_URL}${url}/${id}`);
   },
 };
 
