@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { AntdRegistry } from '@ant-design/nextjs-registry';
 
 
 
@@ -31,7 +32,9 @@ export default function RootLayout({ children }: Props) {
       <body className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-1">
-          {children}
+          <AntdRegistry>
+            {children}
+          </AntdRegistry>
         </main>
         <Footer />
       </body>

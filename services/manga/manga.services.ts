@@ -20,6 +20,7 @@ export type manga = {
     view: number;
     likes: number;
     createdAt: string;
+    status?: "pending" | "approved" | "rejected";
 };
 
 export type CreateMangaType = {
@@ -39,21 +40,15 @@ export type UpdateMangaType = {
   type?: "text" | "comic";
   view?: number;
   likes?: number;
+  status?: "pending" | "approved" | "rejected";
 };
 
 const storyService = {
-
-
-
   getByType: async (type: "comic" | "text") => {
     const url = type === "comic" ? "/manga" : "/novel";
     const res = await axios.get(BASE_URL + url);
     return res.data;
   },
-
-
-
-
 
   // GET ALL
   setStories: async (): Promise<manga[]> => {
@@ -63,20 +58,19 @@ const storyService = {
 
   // CREATE
   createStory: async (data: CreateMangaType): Promise<manga> => {
-    const res = await axios.post(`${BASE_URL}/stories`, data);
+    const res = await axios.post(`${BASE_URL}/manga`, data);
     return res.data;
   },
 
-
   // UPDATE
   updateStory: async (id: string, data: UpdateMangaType): Promise<manga> => {
-    const res = await axios.put(`${BASE_URL}/stories/${id}`, data);
+    const res = await axios.put(`${BASE_URL}/manga/${id}`, data);
     return res.data;
   },
 
   // DELETE
   deleteStory: async (id: string): Promise<void> => {
-    await axios.delete(`${BASE_URL}/stories/${id}`);
+    await axios.delete(`${BASE_URL}/manga/${id}`);
   },
 };
 
