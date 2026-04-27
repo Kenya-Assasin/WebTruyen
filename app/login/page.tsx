@@ -15,7 +15,41 @@ const LoginPage = () => {
       return;
     }
     router.push('/');
+
+     const foundUser = users.find(
+    (u) => u.email === email && u.password === password
+  );
+
+
+  //tk mau
+  if (!foundUser) {
+    alert("Sai email hoặc mật khẩu");
+    return;
+  }
+
+  // lưu user vào localStorage (giả lập đăng nhập)
+  localStorage.setItem("user", JSON.stringify(foundUser));
+
+  // phân quyền
+  if (foundUser.role === "admin") {
+    router.push("/admin");
+  } else {
+    router.push("/"); // người dùng thường về trang chủ
+  }
   };
+
+  const users = [
+    {
+      email: "admin@gmail.com",
+      password: "123456",
+      role: "admin",
+    },
+    {
+      email: "user@gmail.com",
+      password: "123456",
+      role: "user",
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">

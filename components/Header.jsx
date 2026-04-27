@@ -109,37 +109,41 @@ export default function Header() {
 
         {/* đã login */}
         {user && (
-          <div className="relative group hidden sm:block">
-            <div className="cursor-pointer font-medium">
+          <div className="relative hidden sm:block group">
+            
+            {/* trigger */}
+            <div className="cursor-pointer font-medium text-black">
               {user.username} ▼
             </div>
 
             {/* dropdown */}
-            <div className="absolute right-0 mt-2 bg-white border shadow-md hidden group-hover:block">
-              <Link href="/profile" className="block px-4 py-2 hover:bg-gray-100">
+            <div className="absolute right-0 mt-2 w-40 bg-white border shadow-md z-50 opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all rounded">
+              
+              <Link href="/profile" className="block px-4 py-2 hover:bg-gray-100 text-black">
                 Hồ sơ
               </Link>
 
-              <Link href="/history" className="block px-4 py-2 hover:bg-gray-100">
+              <Link href="/history" className="block px-4 py-2 hover:bg-gray-100 text-black">
                 Lịch sử
               </Link>
 
-              <Link href="/bookmarks" className="block px-4 py-2 hover:bg-gray-100">
+              <Link href="/bookmarks" className="block px-4 py-2 hover:bg-gray-100 text-black">
                 Đã lưu
               </Link>
 
               {user.role === "admin" && (
-                <Link href="/admin" className="block px-4 py-2 hover:bg-gray-100">
+                <Link href="/admin" className="block px-4 py-2 hover:bg-gray-100 text-black">
                   Quản trị
                 </Link>
               )}
 
               <div
                 onClick={handleLogout}
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                className="px-4 py-2 hover:bg-gray-100 text-black cursor-pointer"
               >
                 Đăng xuất
               </div>
+
             </div>
           </div>
         )}

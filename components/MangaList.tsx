@@ -4,67 +4,13 @@ import { Table, Image, Modal, Input, Button, Divider } from "antd";
 import { useEffect, useState } from "react";
 import mangaService, { manga } from "@/services/manga/manga.services";
 import Link from "next/link";
-import Imagenextjs from "next/image";
-
+import MangaTop from "@/components/MangaTop";
+import ReadingHistory from "@/components/ReadingHistory";
+import TypeFilter from "@/components/TypeFilter";
 export default function MangaList() {
 
 
-    const data = [
-  {
-    "title": "Hành Trình A-Res",
-    "cover": "https://picsum.photos/200/300?random=1",
-    "author": "Kenya",
-    "type": "comic",
-    "view": 1200,
-    "likes": 350,
-    "createdAt": "2024-01-10T10:00:00.000Z"
-  },
-  {
-    "title": "Bí Ẩn Hành Tinh S",
-    "cover": "https://picsum.photos/200/300?random=2",
-    "author": "Kenya",
-    "type": "text",
-    "view": 980,
-    "likes": 210,
-    "createdAt": "2024-02-05T12:00:00.000Z"
-  },
-  {
-    "title": "Chiến Binh Không Gian",
-    "cover": "https://picsum.photos/200/300?random=3",
-    "author": "Alex",
-    "type": "comic",
-    "view": 1500,
-    "likes": 500,
-    "createdAt": "2024-03-01T08:30:00.000Z"
-  },
-  {
-    "title": "Ký Ức Bị Đánh Cắp",
-    "cover": "https://picsum.photos/200/300?random=4",
-    "author": "Luna",
-    "type": "text",
-    "view": 700,
-    "likes": 150,
-    "createdAt": "2024-01-20T09:15:00.000Z"
-  },
-  {
-    "title": "Thế Giới Song Song",
-    "cover": "https://picsum.photos/200/300?random=5",
-    "author": "Kai",
-    "type": "comic",
-    "view": 2000,
-    "likes": 800,
-    "createdAt": "2024-04-01T14:00:00.000Z"
-  },
-  {
-    "title": "Học Viện Lunareth",
-    "cover": "https://picsum.photos/200/300?random=6",
-    "author": "Kenya",
-    "type": "text",
-    "view": 1100,
-    "likes": 320,
-    "createdAt": "2024-03-15T16:20:00.000Z"
-  }
-]
+    
     const columns = [
         {
             title: "ID",
@@ -108,33 +54,21 @@ export default function MangaList() {
             key: "createdAt",
         },
     ];
-
-
-
-    
     const [mangas, setMangas] = useState<manga[]>([]);
     const [page, setPage] = useState(1);
     const ITEMS_PER_PAGE = 30; // 6 cột × 5 hàng
     const [type, setType] = useState<"comic" | "text">("comic");
     // phân trang
     const start = (page - 1) * ITEMS_PER_PAGE;
-
-
-    const topStories = mangas
-    .slice()
-    .sort((a, b) => Number(b.view) - Number(a.view))
-    .slice(0, 10);
     const [history, setHistory] = useState<any[]>([]);
-
-
-
-    const filteredHistory = history.filter((h: any) => h.type === type);
     const currentData = mangas.slice(start, start + ITEMS_PER_PAGE);
     const [pageInput, setPageInput] = useState(page.toString());
     const fetchMangas = async () => {
     const data = await mangaService.getByType(type);
-    setMangas(data);
-    };
+        setMangas(data);
+        };
+
+
     useEffect (() => {
         fetchMangas();
     }, [type])
@@ -158,25 +92,7 @@ export default function MangaList() {
         <div className="max-w-7xl mx-auto px-6 py-6">
 
             {/* Toggle */}
-            <div className="flex gap-4 mb-6">
-            <button
-                onClick={() => setType("comic")}
-                className={`px-4 py-1 rounded ${
-                type === "comic" ? "bg-blue-500 text-white" : "bg-gray-200 text-black"
-                }`}
-            >
-                Truyện tranh
-            </button>
-
-            <button
-                onClick={() => setType("text")}
-                className={`px-4 py-1 rounded ${
-                type === "text" ? "bg-blue-500 text-white" : "bg-gray-200 text-black"
-                }`}
-            >
-                Truyện chữ
-            </button>
-            </div>
+            <TypeFilter type={type} setType={setType} mangas={mangas} genre="" setGenre={() => {}} />
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6"></div>
 
 
@@ -290,60 +206,10 @@ export default function MangaList() {
             <div className="space-y-6">
 
                 {/* TOP */}
-                <div className="bg-white border rounded p-4 mb-6">
-                <h3 className="font-bold mb-3 text-black"> Top {type === "comic" ? "truyện tranh" : "truyện chữ"} </h3>
-
-                {topStories.length === 0 ? (
-                    <div className="text-sm text-black">Không có dữ liệu</div>
-                ) : (
-                    <div className="space-y-2">
-                    {topStories.map((m) => {
-                        const maxView = topStories[0].view || 1;
-                        const percent = (m.view / maxView) * 100;
-
-                        return (
-                        <div key={m.id}>
-                            <div className="flex justify-between text-sm">
-                            <span className="truncate text-black">{m.title}</span>
-                            <span className="text-black">👁 {m.view}</span>
-                            </div>
-
-                            <div className="w-full bg-black h-2 rounded">
-                            <div
-                                className="h-2 rounded bg-blue-500"
-                                style={{ width: `${percent}%` }}
-                            />
-                            </div>
-                        </div>
-                        );
-                    })}
-                    </div>
-                )}
-                </div>
+                <MangaTop mangas={mangas} type={type} />
 
                 {/* LỊCH SỬ */}
-                <div className="bg-white border rounded p-3">
-                    <h3 className="font-bold mb-3 text-black">
-                    Lịch sử đọc {type === "comic" ? "truyện tranh" : "truyện chữ"}
-                    </h3>
-
-                    {filteredHistory.length === 0 ? (
-                    <div className="text-sm text-black">Chưa có dữ liệu</div>
-                    ) : (
-                    filteredHistory.map((m: any) => (
-                        <div key={m.id} className="flex items-center gap-2 p-2 hover:bg-black rounded">
-
-                        <img src={m.cover} className="w-10 h-12 object-cover rounded" />
-
-                        <div className="flex-1 overflow-hidden">
-                            <div className="text-sm truncate">{m.title}</div>
-                        </div>
-
-                        </div>
-                    ))
-                    )}
-
-                </div>
+                <ReadingHistory history={history} type={type} />
 
             </div>
     </div>
