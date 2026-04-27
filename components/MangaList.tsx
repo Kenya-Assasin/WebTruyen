@@ -7,6 +7,7 @@ import Link from "next/link";
 import MangaTop from "@/components/MangaTop";
 import ReadingHistory from "@/components/ReadingHistory";
 import TypeFilter from "@/components/TypeFilter";
+import SideBackground from "@/components/SideBackground";
 export default function MangaList() {
 
 
@@ -35,8 +36,8 @@ export default function MangaList() {
         },
         {
             title: "Thể loại",
-            dataIndex: "type",
-            key: "type",
+            dataIndex: "genre",
+            key: "genre",
         },
         {
             title: "Lượt xem",
@@ -54,13 +55,13 @@ export default function MangaList() {
             key: "createdAt",
         },
     ];
+
     const [mangas, setMangas] = useState<manga[]>([]);
     const [page, setPage] = useState(1);
     const ITEMS_PER_PAGE = 30; // 6 cột × 5 hàng
     const [type, setType] = useState<"comic" | "text">("comic");
     // phân trang
     const start = (page - 1) * ITEMS_PER_PAGE;
-    const [history, setHistory] = useState<any[]>([]);
     const currentData = mangas.slice(start, start + ITEMS_PER_PAGE);
     const [pageInput, setPageInput] = useState(page.toString());
     const fetchMangas = async () => {
@@ -69,27 +70,23 @@ export default function MangaList() {
         };
 
 
-    useEffect (() => {
-        fetchMangas();
-    }, [type])
+        useEffect (() => {
+            fetchMangas();
+        }, [type])
 
-    useEffect(() => {
-    setPageInput(page.toString());
-    }, [page]);
+        useEffect(() => {
+        setPageInput(page.toString());
+        }, [page]);
 
-    useEffect(() => {
-        const data = JSON.parse(localStorage.getItem("history") || "[]");
-        setHistory(data);
-        }, []);
 
-    useEffect(() => {
-        setPage(1);
-        }, [type]);
+        useEffect(() => {
+            setPage(1);
+            }, [type]);
 
 
 
     return (
-        <div className="max-w-7xl mx-auto px-6 py-6">
+        <div className="max-w-7xl mx-auto px-6 py-6 min-h-screen animated-bg">
 
             {/* Toggle */}
             <TypeFilter type={type} setType={setType} mangas={mangas} genre="" setGenre={() => {}} />
@@ -99,11 +96,10 @@ export default function MangaList() {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
 
-
-                
-
             {/* MAIN */}
             <div className="lg:col-span-3">
+            {/* BACKGROUND */}
+            <SideBackground />
 
                 {/* HIỂN THỊ */}
                 {type === "comic" ? (
@@ -114,23 +110,13 @@ export default function MangaList() {
                     {currentData.map((item) => (
                         <Link key={item.id} href={`/story/${item.id}`}>
                         <div
-                            onClick={() => {
-                            const old = JSON.parse(localStorage.getItem("history") || "[]");
-
-                            const newHistory = [
-                                item,
-                                ...old.filter((i: any) => i.id !== item.id),
-                            ].slice(0, 20);
-
-                            localStorage.setItem("history", JSON.stringify(newHistory));
-                            }}
                             className="bg-white border rounded shadow-sm cursor-pointer hover:shadow-md transition"
                         >
                             <img src={item.cover} className="w-full h-40 object-cover" />
 
                             <div className="p-2 text-black text-sm">
                             <div className="font-semibold truncate">{item.title}</div>
-                            <div className="text-xs text-black">{item.author}</div>
+                            <div className="text-xs text-black">{item.genre}</div>
                             <div className="text-xs">👁 {item.view} | ❤️ {item.likes}</div>
                             </div>
                         </div>
@@ -209,8 +195,7 @@ export default function MangaList() {
                 <MangaTop mangas={mangas} type={type} />
 
                 {/* LỊCH SỬ */}
-                <ReadingHistory history={history} type={type} />
-
+                <ReadingHistory type={type} />
             </div>
     </div>
 </div>

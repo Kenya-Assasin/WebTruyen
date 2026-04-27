@@ -16,6 +16,7 @@ export default function Header() {
     : "text-gray-900 font-medium hover:font-bold";
 
   // lấy user từ localStorage
+
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("user"));
     setUser(data);
@@ -29,6 +30,8 @@ export default function Header() {
     localStorage.removeItem("user");
     setUser(null);
   };
+
+  
 
   return (
     <header className="w-full shadow-md bg-white px-4 py-3 flex items-center justify-between relative">

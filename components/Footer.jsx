@@ -17,7 +17,7 @@ export default function Footer() {
           <ul className="space-y-1">
             <li><a href="/" className="hover:font-semibold">Trang chủ</a></li>
             <li><a href="/browse" className="hover:font-semibold">Khám phá</a></li>
-            <li><a href="/write" className="hover:font-semibold">Sáng tác</a></li>
+            <li><a href="/top" className="hover:font-semibold">Top truyện</a></li>
           </ul>
         </div>
 

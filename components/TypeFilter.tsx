@@ -84,7 +84,7 @@ export default function TypeFilter({
                   : "bg-gray-200 text-black"
               }`}
             >
-              Tất cả
+              Thể loại
             </button>
 
             {genres.map((g) => (

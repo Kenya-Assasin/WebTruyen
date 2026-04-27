@@ -46,3 +46,22 @@ body {
 .rank-1 { color: #f59e0b; font-weight: bold; } /* vàng */
 .rank-2 { color: #9ca3af; font-weight: bold; } /* bạc */
 .rank-3 { color: #d97706; font-weight: bold; } /* đồng */
+
+
+.animated-bg {
+  background: linear-gradient(-45deg, #663399, #4B0082, #7c3aed, #9333ea);
+  background-size: 400% 400%;
+  animation: gradientMove 15s ease infinite;
+}
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
