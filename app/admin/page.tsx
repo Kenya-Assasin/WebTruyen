@@ -10,10 +10,7 @@ const { TextArea } = Input;
 
 export default function AdminPage() {
   const [stories, setStories] = useState<manga[]>([]);
-  const [users, setUsers] = useState<any[]>([
-    { id: '1', username: 'user1', role: 'author', status: 'active' },
-    { id: '2', username: 'user2', role: 'reader', status: 'locked' },
-  ]); // Placeholder for users
+  const [users, setUsers] = useState<any[]>([]);
   const [comments, setComments] = useState<any[]>([
     { id: '1', user: 'user1', content: 'Great story!', story: 'Story A' },
     { id: '2', user: 'user2', content: 'Spam comment', story: 'Story B' },
@@ -32,6 +29,76 @@ export default function AdminPage() {
 
   const handleConfigChange = (key: string, value: any) => {
     setSystemConfig({ ...systemConfig, [key]: value });
+  };
+
+  const loadUsers = () => {
+    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+    const defaultUsers = [
+      {
+        id: 'admin',
+        username: 'admin',
+        email: "admin@gmail.com",
+        role: "admin",
+        status: 'active',
+        createdAt: '2024-01-01T00:00:00.000Z'
+      },
+      {
+        id: 'user',
+        username: 'user',
+        email: "user@gmail.com",
+        role: "user",
+        status: 'active',
+        createdAt: '2024-01-01T00:00:00.000Z'
+      },
+    ];
+    setUsers([...defaultUsers, ...registeredUsers]);
+  };
+
+  const handleLockUser = (userId: string) => {
+    const updatedUsers = users.map(user => 
+      user.id === userId 
+        ? { ...user, status: user.status === 'locked' ? 'active' : 'locked' }
+        : user
+    );
+    setUsers(updatedUsers);
+    
+    // Update in localStorage if it's a registered user
+    if (userId !== 'admin' && userId !== 'user') {
+      const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      const updatedRegisteredUsers = registeredUsers.map((user: any) => 
+        user.id === userId 
+          ? { ...user, status: user.status === 'locked' ? 'active' : 'locked' }
+          : user
+      );
+      localStorage.setItem('registeredUsers', JSON.stringify(updatedRegisteredUsers));
+    }
+    
+    message.success('User status updated');
+  };
+
+  const handleDeleteUser = (userId: string) => {
+    // Don't allow deleting admin accounts
+    if (userId === 'admin' || userId === 'user') {
+      message.error('Cannot delete default admin accounts');
+      return;
+    }
+
+    const updatedUsers = users.filter(user => user.id !== userId);
+    setUsers(updatedUsers);
+    
+    // Remove from localStorage
+    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+    const updatedRegisteredUsers = registeredUsers.filter((user: any) => user.id !== userId);
+    localStorage.setItem('registeredUsers', JSON.stringify(updatedRegisteredUsers));
+    
+    // If deleting current logged in user, logout
+    const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+    if (currentUser && currentUser.id === userId) {
+      localStorage.removeItem('user');
+      window.location.reload();
+    }
+    
+    message.success('User deleted successfully');
   };
 
   const handleApprove = async (id: string, type: 'comic' | 'text', status: 'approved' | 'rejected') => {
@@ -56,13 +123,9 @@ export default function AdminPage() {
     }
   };
 
-  const handleLockUser = (id: string) => {
-    setUsers(users.map(user => user.id === id ? { ...user, status: user.status === 'locked' ? 'active' : 'locked' } : user));
-    message.success('User status updated');
-  };
-
   useEffect(() => {
     loadStories();
+    loadUsers();
     // Load other data as needed
   }, []);
 
@@ -158,13 +221,43 @@ export default function AdminPage() {
 
   const userColumns = [
     { title: 'Username', dataIndex: 'username', key: 'username' },
+    { title: 'Email', dataIndex: 'email', key: 'email' },
     { title: 'Role', dataIndex: 'role', key: 'role' },
-    { title: 'Status', dataIndex: 'status', key: 'status' },
+    { 
+      title: 'Status', 
+      dataIndex: 'status', 
+      key: 'status',
+      render: (status: string) => (
+        <span className={`px-2 py-1 rounded text-xs ${status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+          {status === 'active' ? 'Active' : 'Locked'}
+        </span>
+      )
+    },
+    { 
+      title: 'Created At', 
+      dataIndex: 'createdAt', 
+      key: 'createdAt',
+      render: (date: string) => date ? new Date(date).toLocaleDateString() : 'N/A'
+    },
     {
       title: 'Actions',
       key: 'actions',
       render: (record: any) => (
-        <Button icon={record.status === 'locked' ? <UnlockOutlined /> : <LockOutlined />} onClick={() => handleLockUser(record.id)} />
+        <div className="flex gap-2">
+          <Button 
+            icon={record.status === 'locked' ? <UnlockOutlined /> : <LockOutlined />} 
+            onClick={() => handleLockUser(record.id)}
+            title={record.status === 'locked' ? 'Unlock User' : 'Lock User'}
+          />
+          {record.id !== 'admin' && record.id !== 'user' && (
+            <Button 
+              icon={<DeleteOutlined />} 
+              danger 
+              onClick={() => handleDeleteUser(record.id)}
+              title="Delete User"
+            />
+          )}
+        </div>
       ),
     },
   ];

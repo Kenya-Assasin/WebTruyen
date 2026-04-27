@@ -2,61 +2,92 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const router = useRouter();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+
     if (!email || !password) {
-      alert('Vui lòng nhập email và mật khẩu');
+      setError('Vui lòng nhập email và mật khẩu');
       return;
     }
-    router.push('/');
 
-     const foundUser = users.find(
-    (u) => u.email === email && u.password === password
-  );
+    // Get registered users from localStorage
+    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
 
+    // Add default admin and user accounts
+    const defaultUsers = [
+      {
+        id: 'admin',
+        username: 'admin',
+        email: "admin@gmail.com",
+        password: "123456",
+        role: "admin",
+        status: 'active'
+      },
+      {
+        id: 'user',
+        username: 'user',
+        email: "user@gmail.com",
+        password: "123456",
+        role: "user",
+        status: 'active'
+      },
+    ];
 
-  //tk mau
-  if (!foundUser) {
-    alert("Sai email hoặc mật khẩu");
-    return;
-  }
+    const allUsers = [...registeredUsers, ...defaultUsers];
 
-  // lưu user vào localStorage (giả lập đăng nhập)
-  localStorage.setItem("user", JSON.stringify(foundUser));
+    // Check if email exists
+    const userWithEmail = allUsers.find(u => u.email === email);
+    
+    if (!userWithEmail) {
+      setError("Tài khoản không tồn tại");
+      return;
+    }
 
-  // phân quyền
-  if (foundUser.role === "admin") {
-    router.push("/admin");
-  } else {
-    router.push("/"); // người dùng thường về trang chủ
-  }
+    // Check password
+    if (userWithEmail.password !== password) {
+      setError("Mật khẩu không đúng");
+      return;
+    }
+
+    // Check if user is locked
+    if (userWithEmail.status === 'locked') {
+      setError("Tài khoản của bạn đã bị khóa. Vui lòng liên hệ admin.");
+      return;
+    }
+
+    const foundUser = userWithEmail;
+
+    // Save user to localStorage (simulate login)
+    localStorage.setItem("user", JSON.stringify({
+      id: foundUser.id,
+      username: foundUser.username,
+      email: foundUser.email,
+      role: foundUser.role
+    }));
+
+    // Redirect based on role
+    if (foundUser.role === "admin") {
+      router.push("/admin");
+    } else {
+      router.push("/"); // regular users go to home
+    }
   };
-
-  const users = [
-    {
-      email: "admin@gmail.com",
-      password: "123456",
-      role: "admin",
-    },
-    {
-      email: "user@gmail.com",
-      password: "123456",
-      role: "user",
-    },
-  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo/Icon Section */}
         <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Đăng nhập</h1>
+          <h1 className="text-3xl font-bold gradient-text">Đăng nhập</h1>
           <p className="text-gray-600 mt-2">Tiếp tục đọc truyện ngay bây giờ</p>
         </div>
 
@@ -86,6 +117,12 @@ const LoginPage = () => {
               />
             </div>
 
+            {error && (
+              <div className="text-red-600 text-sm text-center">
+                {error}
+              </div>
+            )}
+
             <button
               type="submit"
               className="w-full rounded-2xl bg-blue-600 py-3 text-white font-semibold hover:bg-blue-700 transition-colors"
@@ -96,9 +133,9 @@ const LoginPage = () => {
 
           <p className="mt-6 text-center text-sm text-gray-600">
             Chưa có tài khoản?{' '}
-            <a href="/register" className="text-blue-600 hover:underline">
-              Đăng ký ngay
-            </a>
+            <Link href="/register" className="text-blue-600 hover:underline">
+              Đăng ký ngay nhé!
+            </Link>
           </p>
         </div>
 

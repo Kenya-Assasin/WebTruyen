@@ -43,6 +43,24 @@ body {
   100% { background-position: 0% 50%; }
 }
 
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.gradient-text {
+  display: inline-block;
+  color: transparent;
+  background: linear-gradient(90deg, #22c55e, #38bdf8, #8b5cf6);
+  background-size: 300% 200%;
+  background-position: 0% 50%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientShift 3s ease-in-out infinite;
+}
+
 .rank-1 { color: #f59e0b; font-weight: bold; } /* vàng */
 .rank-2 { color: #9ca3af; font-weight: bold; } /* bạc */
 .rank-3 { color: #d97706; font-weight: bold; } /* đồng */

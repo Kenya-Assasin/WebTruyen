@@ -8,6 +8,7 @@ export default function Header() {
   const [search, setSearch] = useState("");
   const [stories, setStories] = useState([]); // dữ liệu rỗng
   const [menuOpen, setMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
   const pathname = usePathname();
   const activeClass = (path) =>
@@ -21,6 +22,20 @@ export default function Header() {
     const data = JSON.parse(localStorage.getItem("user"));
     setUser(data);
   }, []);
+
+  // Đóng user menu khi click bên ngoài
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userMenuOpen && !event.target.closest('.user-menu-container')) {
+        setUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [userMenuOpen]);
 
   const filteredStories = (stories || []).filter((story) =>
     story.title.toLowerCase().includes(search.toLowerCase())
@@ -105,49 +120,73 @@ export default function Header() {
 
         {/* chưa login */}
         {!user && (
-          <Link href="/login" className="hidden sm:block text-black font-medium">
-            Đăng nhập
-          </Link>
+          <div className="hidden sm:flex items-center gap-4">
+            <Link href="/login" className="text-black font-medium hover:text-blue-600">
+              Đăng nhập
+            </Link>
+            <Link href="/register" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+              Đăng ký
+            </Link>
+          </div>
         )}
 
         {/* đã login */}
         {user && (
-          <div className="relative hidden sm:block group">
-            
-            {/* trigger */}
-            <div className="cursor-pointer font-medium text-black">
-              {user.username} ▼
-            </div>
-
-            {/* dropdown */}
-            <div className="absolute right-0 mt-2 w-40 bg-white border shadow-md z-50 opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all rounded">
-              
-              <Link href="/profile" className="block px-4 py-2 hover:bg-gray-100 text-black">
-                Hồ sơ
-              </Link>
-
-              <Link href="/history" className="block px-4 py-2 hover:bg-gray-100 text-black">
-                Lịch sử
-              </Link>
-
-              <Link href="/bookmarks" className="block px-4 py-2 hover:bg-gray-100 text-black">
-                Đã lưu
-              </Link>
-
-              {user.role === "admin" && (
-                <Link href="/admin" className="block px-4 py-2 hover:bg-gray-100 text-black">
-                  Quản trị
-                </Link>
-              )}
-
-              <div
-                onClick={handleLogout}
-                className="px-4 py-2 hover:bg-gray-100 text-black cursor-pointer"
-              >
-                Đăng xuất
+          <div className="relative hidden sm:block user-menu-container">
+            {/* Avatar trigger */}
+            <div 
+              className="cursor-pointer flex items-center gap-2"
+              onClick={() => setUserMenuOpen(!userMenuOpen)}
+            >
+              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                {user.username.charAt(0).toUpperCase()}
               </div>
-
+              <span className="text-black font-medium">{user.username}</span>
+              <span className={`text-gray-500 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`}>▼</span>
             </div>
+
+            {/* Dropdown menu - show when userMenuOpen is true */}
+            {userMenuOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white border shadow-lg z-50 rounded-lg">
+                <div className="py-2">
+                  <Link href="/profile" className="block px-4 py-2 hover:bg-gray-100 text-black text-sm">
+                    👤 Hồ sơ
+                  </Link>
+
+                  <Link href="/history" className="block px-4 py-2 hover:bg-gray-100 text-black text-sm">
+                    📚 Lịch sử đọc
+                  </Link>
+
+                  <Link href="/bookmarks" className="block px-4 py-2 hover:bg-gray-100 text-black text-sm">
+                    ❤️ Đã lưu
+                  </Link>
+
+                  {user.role === "user" && (
+                    <Link href="/write" className="block px-4 py-2 hover:bg-gray-100 text-black text-sm">
+                      ✍️ Sáng tác
+                    </Link>
+                  )}
+
+                  {user.role === "admin" && (
+                    <Link href="/admin" className="block px-4 py-2 hover:bg-gray-100 text-black text-sm">
+                      ⚙️ Quản trị
+                    </Link>
+                  )}
+
+                  <div className="border-t my-1"></div>
+
+                  <div
+                    onClick={() => {
+                      handleLogout();
+                      setUserMenuOpen(false);
+                    }}
+                    className="px-4 py-2 hover:bg-red-50 text-red-600 cursor-pointer text-sm"
+                  >
+                    🚪 Đăng xuất
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -195,16 +234,63 @@ export default function Header() {
         )}
 
         {!user ? (
-          <Link href="/login" className="block p-3 text-gray-900 font-medium">
-            Đăng nhập
-          </Link>
+          <>
+            <Link href="/login" className="block p-3 border-b text-gray-900 font-medium">
+              Đăng nhập
+            </Link>
+            <Link href="/register" className="block p-3 text-gray-900 font-medium">
+              Đăng ký
+            </Link>
+          </>
         ) : (
-          <div
-            onClick={handleLogout}
-            className="block p-3 text-gray-900 font-medium cursor-pointer"
-          >
-            Đăng xuất
-          </div>
+          <>
+            {/* User info in mobile menu */}
+            <div className="p-3 border-b bg-gray-50">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
+                  {user.username.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <div className="font-medium text-black">{user.username}</div>
+                  <div className="text-sm text-gray-600">{user.email}</div>
+                </div>
+              </div>
+            </div>
+
+            <Link href="/profile" className="block p-3 border-b text-gray-900 font-medium">
+              👤 Hồ sơ
+            </Link>
+
+            <Link href="/history" className="block p-3 border-b text-gray-900 font-medium">
+              📚 Lịch sử đọc
+            </Link>
+
+            <Link href="/bookmarks" className="block p-3 border-b text-gray-900 font-medium">
+              ❤️ Đã lưu
+            </Link>
+
+            {user.role === "user" && (
+              <Link href="/write" className="block p-3 border-b text-gray-900 font-medium">
+                ✍️ Sáng tác
+              </Link>
+            )}
+
+            {user.role === "admin" && (
+              <Link href="/admin" className="block p-3 border-b text-gray-900 font-medium">
+                ⚙️ Quản trị
+              </Link>
+            )}
+
+            <div
+              onClick={() => {
+                handleLogout();
+                setMenuOpen(false); // Close mobile menu after logout
+              }}
+              className="block p-3 text-red-600 font-medium cursor-pointer"
+            >
+              🚪 Đăng xuất
+            </div>
+          </>
         )}
       </div>
     )}
