@@ -4,29 +4,48 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
+type Story = {
+  id: string;
+  title: string;
+};
+type User = {
+  username: string;
+  email: string;
+  role: "user" | "admin";
+};
+
 export default function Header() {
   const [search, setSearch] = useState("");
-  const [stories, setStories] = useState([]); // dữ liệu rỗng
+  const [stories, setStories] = useState<Story[]>([]); // dữ liệu rỗng
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
+  
   const pathname = usePathname();
-  const activeClass = (path) =>
+  
+  const activeClass = (path: string) =>
   pathname === path
     ? "text-blue-600 font-bold"
     : "text-gray-900 font-medium hover:font-bold";
 
   // lấy user từ localStorage
 
-  useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("user"));
-    setUser(data);
-  }, []);
+useEffect(() => {
+  const storedUser = localStorage.getItem("user");
+
+  if (storedUser) {
+    setUser(JSON.parse(storedUser));
+  }
+}, []);
+
 
   // Đóng user menu khi click bên ngoài
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (userMenuOpen && !event.target.closest('.user-menu-container')) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        userMenuOpen &&
+        !(event.target as HTMLElement).closest(".user-menu-container")
+      ) {
         setUserMenuOpen(false);
       }
     };
@@ -37,6 +56,8 @@ export default function Header() {
     };
   }, [userMenuOpen]);
 
+
+  
   const filteredStories = (stories || []).filter((story) =>
     story.title.toLowerCase().includes(search.toLowerCase())
   );
