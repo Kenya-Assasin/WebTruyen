@@ -1,62 +1,62 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
 
 export default function NotFound() {
-  const [glitch, setGlitch] = useState(false);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setGlitch(true);
-      setTimeout(() => setGlitch(false), 120);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black text-white">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-black to-blue-900 opacity-80" />
+    <div className="relative min-h-screen flex items-center justify-center bg-black text-white overflow-hidden">
 
-      {/* Animated blur circles */}
-      <div className="absolute w-[500px] h-[500px] bg-purple-600 rounded-full blur-[120px] opacity-30 top-[-100px] left-[-100px] animate-pulse" />
-      <div className="absolute w-[400px] h-[400px] bg-blue-600 rounded-full blur-[120px] opacity-30 bottom-[-100px] right-[-100px] animate-pulse" />
+      {/* Background aura */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(120,0,255,0.25),black_70%)]" />
 
-      {/* Content */}
+      {/* Crack effect */}
+      <div className="absolute inset-0 opacity-20 bg-[url('/crack.png')] bg-cover" />
+
+      {/* Floating particles */}
+      <div className="absolute inset-0 animate-pulse opacity-30">
+        <div className="w-full h-full bg-[radial-gradient(white_1px,transparent_1px)] bg-[size:40px_40px]" />
+      </div>
+
+      {/* Main content */}
       <div className="relative z-10 text-center px-6">
-        {/* 404 glitch text */}
-        <h1
-          className={`text-7xl md:text-9xl font-extrabold tracking-widest transition ${
-            glitch ? "translate-x-1 text-red-500" : ""
-          }`}
-        >
+
+        {/* Title */}
+        <h1 className="text-7xl md:text-9xl font-extrabold tracking-widest text-purple-500 drop-shadow-[0_0_20px_rgba(168,85,247,0.8)]">
           404
         </h1>
 
-        <h2 className="mt-4 text-2xl md:text-3xl font-semibold">
-          Trang không tồn tại
+        {/* Subtitle */}
+        <h2 className="mt-4 text-2xl md:text-3xl font-semibold text-gray-200">
+          Reality has fractured
         </h2>
 
-        <p className="mt-2 text-gray-300 max-w-md mx-auto">
-          Có thể bạn đã nhập sai đường dẫn hoặc trang đã bị xóa.
+        <p className="mt-3 text-gray-400 max-w-md mx-auto">
+          Trang bạn tìm đã biến mất khỏi dòng chảy của A-res.
+          Có thể nó chưa từng tồn tại.
         </p>
 
         {/* Buttons */}
-        <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+
           <Link
             href="/"
-            className="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition font-medium"
+            className="px-6 py-2 bg-purple-700 hover:bg-purple-800 rounded-lg transition shadow-lg shadow-purple-900/50"
           >
-            Về trang chủ
+            Trở về thế giới chính
           </Link>
 
           <Link
             href="/browse"
-            className="px-6 py-2 border border-gray-400 hover:bg-white hover:text-black rounded-lg transition font-medium"
+            className="px-6 py-2 border border-purple-500 hover:bg-purple-500 hover:text-black rounded-lg transition"
           >
-            Khám phá truyện
+            Khám phá thực tại khác
           </Link>
+
+        </div>
+
+        {/* Flavor text */}
+        <div className="mt-10 text-xs text-gray-500 italic">
+          [ERROR CODE: LOST_IN_VOID]
         </div>
       </div>
     </div>
