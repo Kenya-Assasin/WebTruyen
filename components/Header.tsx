@@ -275,6 +275,7 @@ export default function Header() {
               </Link>
             )}
 
+
             {user.role === "admin" && (
               <Link href="/admin" className="block p-3 border-b text-gray-900 font-medium">
                 ⚙️ Quản trị
