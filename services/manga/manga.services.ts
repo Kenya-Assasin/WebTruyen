@@ -17,6 +17,7 @@ export type manga = {
     cover: string;
     author: string;
     type: "text" | "comic";
+    genre: string;
     view: number;
     likes: number;
     createdAt: string;
@@ -28,6 +29,7 @@ export type CreateMangaType = {
   cover: string;
   author: string;
   type: "text" | "comic";
+  genre: string;
   view?: number;
   likes?: number;
   createdAt?: string;
@@ -38,6 +40,7 @@ export type UpdateMangaType = {
   cover?: string;
   author?: string;
   type?: "text" | "comic";
+  genre?: string;
   view?: number;
   likes?: number;
   status?: "pending" | "approved" | "rejected";
