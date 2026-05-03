@@ -31,7 +31,7 @@ export default function NotFound() {
         </h2>
 
         <p className="mt-3 text-gray-400 max-w-md mx-auto">
-          Trang bạn tìm đã biến mất khỏi dòng chảy của A-res.
+          Trang bạn tìm đã biến mất khỏi dòng chảy của thê giới.
           Có thể nó chưa từng tồn tại.
         </p>
 
