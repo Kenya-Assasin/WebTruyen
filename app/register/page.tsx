@@ -64,6 +64,9 @@ const RegisterPage = () => {
       role: newUser.role
     }));
 
+    // Dispatch custom event to update Header immediately
+    window.dispatchEvent(new Event("user-logged-in"));
+
     alert('Đăng ký thành công!');
     router.push('/');
   };
@@ -149,7 +152,7 @@ const RegisterPage = () => {
           </p>
         </div>
 
-        <p className="text-center mt-6 text-sm text-gray-500">&copy; 2026 WebTruyen. Tất cả quyền được bảo lưu.</p>
+        <p className="text-center mt-6 text-sm text-gray-500">&copy; 2026 WebTruyen. Khám phá thế giới của bạn.</p>
       </div>
     </div>
   );

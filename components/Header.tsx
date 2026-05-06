@@ -29,13 +29,34 @@ export default function Header() {
     : "text-gray-900 font-medium hover:font-bold";
 
   // lấy user từ localStorage
-
 useEffect(() => {
   const storedUser = localStorage.getItem("user");
 
   if (storedUser) {
     setUser(JSON.parse(storedUser));
   }
+}, []);
+
+// Lắng nghe event khi user đăng nhập để cập nhật ngay
+useEffect(() => {
+  const handleUserLoggedIn = () => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  };
+
+  const handleUserLoggedOut = () => {
+    setUser(null);
+  };
+
+  window.addEventListener("user-logged-in", handleUserLoggedIn);
+  window.addEventListener("user-logged-out", handleUserLoggedOut);
+
+  return () => {
+    window.removeEventListener("user-logged-in", handleUserLoggedIn);
+    window.removeEventListener("user-logged-out", handleUserLoggedOut);
+  };
 }, []);
 
 
@@ -65,6 +86,8 @@ useEffect(() => {
   const handleLogout = () => {
     localStorage.removeItem("user");
     setUser(null);
+    // Dispatch event to update state across components
+    window.dispatchEvent(new Event("user-logged-out"));
   };
 
   

@@ -60,7 +60,7 @@ const LoginPage = () => {
 
     // Check if user is locked
     if (userWithEmail.status === 'locked') {
-      setError("Tài khoản của bạn đã bị khóa. Vui lòng liên hệ admin.");
+      setError("Tài khoản của bạn đã bị khóa. Vui lòng liên hệ admin để được hỗ trợ.");
       return;
     }
 
@@ -73,6 +73,9 @@ const LoginPage = () => {
       email: foundUser.email,
       role: foundUser.role
     }));
+
+    // Dispatch custom event to update Header immediately
+    window.dispatchEvent(new Event("user-logged-in"));
 
     // Redirect based on role
     if (foundUser.role === "admin") {
@@ -139,7 +142,7 @@ const LoginPage = () => {
           </p>
         </div>
 
-        <p className="text-center mt-6 text-sm text-gray-500">&copy; 2026 WebTruyen. Tất cả quyền được bảo lưu.</p>
+        <p className="text-center mt-6 text-sm text-gray-500">&copy; 2026 WebTruyen. Khám phá thế giới của bạn.</p>
       </div>
     </div>
   );
