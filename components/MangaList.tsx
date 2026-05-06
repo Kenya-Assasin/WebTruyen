@@ -58,7 +58,7 @@ export default function MangaList() {
 
     const [mangas, setMangas] = useState<manga[]>([]);
     const [page, setPage] = useState(1);
-    const ITEMS_PER_PAGE = 30; // 6 cột × 5 hàng
+    const ITEMS_PER_PAGE = 60; // 6 cột × 5 hàng
     const [type, setType] = useState<"comic" | "text">("comic");
     // phân trang
     const start = (page - 1) * ITEMS_PER_PAGE;
@@ -90,7 +90,7 @@ export default function MangaList() {
 
             {/* Toggle */}
             <TypeFilter type={type} setType={setType} mangas={mangas} genre="" setGenre={() => {}} />
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6"></div>
+
 
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -106,13 +106,13 @@ export default function MangaList() {
 
                 <>
                     {/* GRID */}
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                     {currentData.map((item) => (
                         <Link key={item.id} href={`/story/${item.id}`}>
                         <div
                             className="bg-white border rounded shadow-sm cursor-pointer hover:shadow-md transition"
                         >
-                            <img src={item.cover} className="w-full h-40 object-cover" />
+                            <img src={item.cover} className="w-full h-50 object-cover" />
 
                             <div className="p-2 text-black text-sm">
                             <div className="font-semibold truncate">{item.title}</div>
@@ -124,8 +124,10 @@ export default function MangaList() {
                     ))}
                     </div>
 
+
+<div className="flex flex-col min-h-[20vh]">
                     {/* PAGINATION */}
-                    <div className="flex justify-center gap-3 mt-6">
+                    <div className="flex justify-center gap-3 mt-auto py-6">
                     <button
                         onClick={() => setPage(page - 1)}
                         disabled={page === 1}
@@ -173,6 +175,7 @@ export default function MangaList() {
                         Next
                     </button>
                     </div>
+                </div>
                 </>
 
                 ) : (
@@ -180,6 +183,7 @@ export default function MangaList() {
                 <Table
                     dataSource={mangas}
                     columns={columns}
+                    scroll={{ x: 800 }}
                     rowKey="id"
                     pagination={{ pageSize: 10 }}
                 />

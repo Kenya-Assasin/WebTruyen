@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 
 type Manga = {
   id: string;
@@ -25,18 +25,23 @@ export default function TypeFilter({
   setGenre,
 }: Props) {
 
-  // 🔥 chỉ lấy genre từ mangas hiện tại (đã đúng type từ API)
+  // Lấy danh sách genre
   const genres = useMemo(() => {
-    const safeMangas = mangas || [];
-
     return Array.from(
       new Set(
-        safeMangas
+        (mangas || [])
           .map((m) => m.genre)
           .filter(Boolean)
       )
-    );
+    ) as string[];
   }, [mangas]);
+
+  // ✅ set mặc định genre đầu tiên
+  useEffect(() => {
+    if (genres.length > 0 && !genre) {
+      setGenre(genres[0]);
+    }
+  }, [genres]);
 
   return (
     <div className="mb-6 space-y-3">
@@ -46,7 +51,7 @@ export default function TypeFilter({
         <button
           onClick={() => {
             setType("comic");
-            setGenre("");
+            setGenre(""); // reset để useEffect chọn lại mặc định
           }}
           className={`px-4 py-1 rounded ${
             type === "comic"
@@ -60,7 +65,7 @@ export default function TypeFilter({
         <button
           onClick={() => {
             setType("text");
-            setGenre("");
+            setGenre(""); // reset để useEffect chọn lại mặc định
           }}
           className={`px-4 py-1 rounded ${
             type === "text"
@@ -73,35 +78,22 @@ export default function TypeFilter({
       </div>
 
       {/* GENRE */}
-      <div className="flex flex-wrap gap-2">
-        {genres.length > 0 && (
-          <>
+      <div className="overflow-x-auto pb-2">
+        <div className="flex flex-nowrap gap-2 min-w-max">
+          {genres.map((g) => (
             <button
-              onClick={() => setGenre("")}
-              className={`px-3 py-1 rounded text-sm ${
-                genre === ""
-                  ? "bg-black text-white"
+              key={g}
+              onClick={() => setGenre(g)} // ✅ chỉ chọn từ list
+              className={`px-3 py-1 rounded text-sm whitespace-nowrap ${
+                genre === g
+                  ? "bg-blue-600 text-white"
                   : "bg-gray-200 text-black"
               }`}
             >
-              Thể loại
+              {g}
             </button>
-
-            {genres.map((g) => (
-              <button
-                key={g}
-                onClick={() => setGenre(g!)}
-                className={`px-3 py-1 rounded text-sm ${
-                  genre === g
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-200 text-black"
-                }`}
-              >
-                {g}
-              </button>
-            ))}
-          </>
-        )}
+          ))}
+        </div>
       </div>
 
     </div>
