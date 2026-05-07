@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import TypeFilter from "@/components/TypeFilter";
+import SideBackground from "@/components/SideBackground";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -135,6 +136,9 @@ export default function BrowsePage() {
           </div>
         )}
       </div>
+
+            {/* BACKGROUND */}
+            <SideBackground />
 
       {/* PAGINATION */}
       <div className="flex justify-center gap-3 py-4 mt-auto">

@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import SideBackground from "@/components/SideBackground";
 
 export default function WritePage() {
   const [title, setTitle] = useState("");
@@ -97,6 +98,9 @@ export default function WritePage() {
 
               </div>
             </div>
+
+            {/* BACKGROUND */}
+            <SideBackground />
 
             {/* CHAPTER */}
             <div className="bg-[#111827] border border-gray-800 rounded-xl p-6">
