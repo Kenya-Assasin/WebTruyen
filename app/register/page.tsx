@@ -77,7 +77,7 @@ const RegisterPage = () => {
         {/* Logo/Icon Section */}
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold gradient-text">Đăng ký tài khoản</h1>
-          <p className="text-gray-600 mt-2">Tạo tài khoản để bắt đầu đọc truyện</p>
+          <p className="text-gray-600 mt-2 text-white text-white">Tạo tài khoản để bắt đầu đọc truyện</p>
         </div>
 
         <div className="bg-white rounded-3xl shadow-lg p-8">

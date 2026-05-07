@@ -91,7 +91,7 @@ const LoginPage = () => {
         {/* Logo/Icon Section */}
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold gradient-text">Đăng nhập</h1>
-          <p className="text-gray-600 mt-2">Tiếp tục đọc truyện ngay bây giờ</p>
+          <p className="text-gray-600 mt-2 text-white">Tiếp tục đọc truyện ngay bây giờ</p>
         </div>
 
         <div className="bg-white rounded-3xl shadow-lg p-8">
