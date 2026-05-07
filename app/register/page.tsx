@@ -72,7 +72,7 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4 max-w-7xl mx-auto px-6 py-6 min-h-screen animated-bg">
       <div className="w-full max-w-md">
         {/* Logo/Icon Section */}
         <div className="text-center mb-6">
